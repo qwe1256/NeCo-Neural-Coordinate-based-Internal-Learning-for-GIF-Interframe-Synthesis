@@ -1,0 +1,37 @@
+hydra:
+  run:
+    dir: ../outputs/${now:%Y-%m-%d-%H-%M-%S}
+model:
+  ffm:
+    mode: linear #"loglinear" to use loglinear ffm
+    L: 10 #hyperparameter controlling the number of frequency
+    num_input: 3 #number of input
+  mlp:
+    num_inputs: 60 #number of input for mlp usually "num_input*2*L"
+    num_outputs: 3 #number of output(RGB)
+    num_neurons: 256 #number of neurons
+    depth: 8 #depth of mlp
+    skip_list: [2,5] #skip layers
+    body_acti: LeakyReLU
+    last_acti: Null # can be Sigmoid
+  nerf:
+    type: GIFNERF
+
+gif:
+  data_path: data/test.gif # the image path
+  ofargs: [0.5, 3, 15, 3, 5, 1.2, 0] #dont change
+train:
+  train_split: 5 #pick one frame every "train_split" frame
+  batch_size: 200000
+  GPUIndex: [2]
+  optim:
+    type: Adam
+    kwargs:
+      lr: 1e-3
+      weight_decay: 1e-8
+  lr_sche:
+    type: ExponentialLR
+    kwargs:
+      gamma: 0.999
+  ckpt: Null
+  num_epoches: 200 #number of epoches
